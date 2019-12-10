@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        /** @type {HTMLCanvasElement} */ 
+        const canvas = document.getElementById('canvas')
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        const ctx = canvas.getContext('2d')
+
+        function Ball(x,y,radius,dx,dy,color){
+            this.x = x + radius
+            this.y = y + radius
+            this.radius = radius
+            this.x1 = x
+            this.y1 = y
+            this.dx = dx
+            this.dy = dy
+            this.color = color
+            
+        }
+
+        Ball.prototype = {
+            constructor : Ball,
+            //生成小球
+            render : function(){
+                
+                    ctx.beginPath()
+                    ctx.arc(this.x,this.y, this.radius,0,Math.PI*2)
+                    ctx.fillStyle = this.color
+                    ctx.fill()
+                    // ctx.stroke()
+                    ctx.closePath()
+            },
+            //小球运动
+            move : function(){
+                this.render()
+                console.log(this.x);
+
+                if(this.x - this.radius < 0 || this.x  > canvas.width- this.radius ) {
+                    this.dx  = -this.dx
+                } 
+
+                if( this.y- this.radius < 0 || this.y > canvas.height - this.radius) {
+                    this.dy = -this.dy
+                }
+
+                this.x -= this.dx
+                this.y -= this.dy
+            }
+        }
+
+        let BallArray = []
+        let colorArray = ['#77FFE5','#93E876','#FFEE8F','#E8A976','#FF82A7']
+
+        for (let index = 0; index < 100; index++) {
+            let r = Math.random()*10
+            BallArray.push(new Ball(Math.random()*(canvas.width - 2*r),Math.random()*(canvas.height-2*r),r,Math.random()*10-5,Math.random()*10-5,colorArray[Math.floor(Math.random()*5)]))
+        }
+        console.log(BallArray);
+        
+
+        function animation(){
+            requestAnimationFrame(animation)
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            // BallArray.forEach(item=>{
+            //     item.move()
+            // })
+            for (let b of BallArray) {
+                b.move()
+            }
+        }
+        animation()
+    </script>
+</body>
+</html>

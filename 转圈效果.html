@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        /** @type {HTMLCanvasElement} */
+        const canvas = document.getElementById('canvas')
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        const ctx = canvas.getContext('2d')
+
+        let mouse = {
+            x :canvas.width /2,
+            y : canvas.height/2
+        }
+
+        function Spin(x, y, r , vel ,rd ,c ,color) {
+            this.x = x
+            this.y = y
+            this.x1 = x
+            this.y1 = y
+            this.r = r
+            this.tante = 0
+            this.vel = vel //初始角度
+            this.rd = rd
+            this.c = c //加速度
+            this.color = color
+            this.lastM = {
+                x:x,
+                y:y
+            }
+
+            this.render = function (anm) {
+                
+                ctx.beginPath()
+                // ctx.fillStyle = 'red'
+                // ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2)
+                // ctx.fill()
+                ctx.strokeStyle = this.color
+                ctx.moveTo(anm.x,anm.y)
+                ctx.lineTo(this.x,this.y)
+                ctx.lineWidth = 2
+                ctx.stroke()
+                ctx.closePath()
+                // console.log(anm);
+                
+            }
+
+            this.move = function () {
+              
+                let anm = {
+                    x : this.x,
+                    y : this.y
+                }
+
+                //???拖拽效果
+                this.lastM.x += (mouse.x - this.lastM.x) * this.c
+                this.lastM.y += (mouse.y - this.lastM.y) * this.c 
+                
+                //移动
+                this.x  = this.lastM.x +  Math.cos(this.vel) * this.rd
+                this.y  = this.lastM.y +  Math.sin(this.vel) * this.rd
+                // ctx.translate(300, 500);
+                // ctx.rotate(this.vel*Math.PI/180)
+                this.vel += this.c
+                this.render(anm)
+            }
+        }
+
+        let spinArr = []
+        let colorArray = ['#77FFE5','#93E876','#FFEE8F','#E8A976','#FF82A7']
+        for (let index = 0; index < 30; index++) {
+            let x = Math.random()*canvas.width
+            let y = Math.random()+canvas.height
+            let rd = Math.random()*20 + 30
+            let vel = Math.random()*10-5
+            let c = Math.random()*0.05
+            spinArr.push(new Spin(canvas.width/2, canvas.height/2, 20 , vel , rd,c ,colorArray[Math.floor(Math.random()*5)]))
+        }
+
+        function animation() {
+            requestAnimationFrame(animation)
+            ctx.fillStyle = 'rgba(255,255,255,.1)'
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            for (let spin of spinArr) {
+                spin.move()
+            }
+
+        }
+        animation()
+
+        window.addEventListener('mousemove' , function(event){
+                mouse.x = event.pageX,
+                mouse.y = event.pageY  
+        }) 
+
+    </script>
+
+</body>
+
+</html>
