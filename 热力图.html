@@ -172,7 +172,7 @@
     window.onload = function () {
         // 0. 创建Canvas并获取上下文
         let canvas = document.getElementById("myCanvas");
-        // let canvas = this.$refs.cvs as any; // vue中使用ref 可避免在组件还未销毁时优先绘制了组件
+        // let canvas = this.$refs.cvs as any; // vue中使用ref 获取的是当前组件内的canvas dom对象,而非全局dom
         let context = canvas.getContext("2d");
 
         // 1.2.3. 根据热力值绘制辐射圆
