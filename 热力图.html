@@ -9,10 +9,10 @@
 </head>
 
 <body>
-  <!-- <canvas id="hotmap" width="800" height="800" style="border:1px solid #000000;"></canvas> -->
-  <canvas id="myCanvas" width="600" height="600"></canvs>
+    <!-- <canvas id="hotmap" width="800" height="800" style="border:1px solid #000000;"></canvas> -->
+    <canvas id="myCanvas" width="1920" height="1080" style="width: 240px;height: 125px;background: #000;"></canvs>
 </body>
-    <!-- <script>
+<!-- <script>
         var pointsdata = [{
             x: 471,
             y: 277,
@@ -157,114 +157,112 @@
         }
     </script> -->
 
-    <script>
-        // 热力数据
-        var dataList = [
-          { x: 471, y: 277, value: 25 },
-          { x: 438, y: 375, value: 97 },
-          { x: 373, y: 19, value: 71 },
-          { x: 473, y: 42, value: 63 },
-          { x: 463, y: 95, value: 97 },
-          { x: 590, y: 437, value: 34 },
-          { x: 377, y: 442, value: 66 },
-          { x: 171, y: 254, value: 20 },
-          { x: 6, y: 582, value: 64 },
-          { x: 387, y: 477, value: 14 },
-          { x: 300, y: 300, value: 80 }
-        ];
+<script>
+    // 热力数据
+    var dataList = [
+        { x: 1020, y: 360 },
+        { x: 936, y: 480 }, 
+        { x: 960, y: 480 }, 
+        { x: 1032, y: 480 }, 
+        { x: 1056, y: 480 }
+    ]
+    dataList.forEach(item=>{
+        item.value = 1
+    })
+    window.onload = function () {
+        // 0. 创建Canvas并获取上下文
+        let canvas = document.getElementById("myCanvas");
+        // let canvas = this.$refs.cvs as any; // vue中使用ref 可避免在组件还未销毁时优先绘制了组件
+        let context = canvas.getContext("2d");
 
-        window.onload = function () {
-          // 0. 创建Canvas并获取上下文
-          let canvas = document.getElementById("myCanvas");
-          let context = canvas.getContext("2d");
-
-          // 1.2.3. 根据热力值绘制辐射圆
-          let min = 0;
-          let max = dataList.reduce((max, data) => {
+        // 1.2.3. 根据热力值绘制辐射圆
+        let min = 0;
+        let max = dataList.reduce((max, data) => {
             return Math.max(max, data.value);
-          }, 0);
-          dataList.slice(0, 10).forEach(data => drawRadiation(context, {
+        }, 0);
+        dataList.slice(0, 10).forEach(data => drawRadiation(context, {
             x: data.x,
             y: data.y,
-            radius: 80,
+            radius: 50,
             weight: Math.max(Math.min((data.value - min) / (max - min), 1), 0)
-          }));
+        }));
 
-          // 4. 颜色映射
-          let palette = createPalette();
-          // document.body.appendChild(palette.canvas);
+        // 4. 颜色映射
+        let palette = createPalette();
+        // document.body.appendChild(palette.canvas);
 
-          let { width, height } = canvas;
-          let imageData = context.getImageData(0, 0, width, height);
-          let data = imageData.data;
-          for (let i = 3; i < data.length; i += 4) {
+        let { width, height } = canvas;
+        let imageData = context.getImageData(0, 0, width, height);
+        let data = imageData.data;
+        for (let i = 3; i < data.length; i += 4) {
             let alpha = data[i];
             let color = palette.pickColor(alpha);
             data[i - 3] = color[0];
             data[i - 2] = color[1];
             data[i - 1] = color[2];
-          }
-          context.putImageData(imageData, 0, 0);
         }
+        context.putImageData(imageData, 0, 0);
+    }
 
-        // 绘制辐射圆
-        function drawRadiation(context, opts) {
-          let { x, y, radius, weight } = opts;
-          radius = Math.round(radius * weight);
+    // 绘制辐射圆
+    function drawRadiation(context, opts) {
+        let { x, y, radius, weight } = opts;
+        radius = Math.round(radius * weight);
 
-          // 设置填充色
-          let rGradient = context.createRadialGradient(x, y, 0, x, y, radius);
-          rGradient.addColorStop(0, "rgba(0, 0, 0, 1)");
-          rGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-          context.fillStyle = rGradient;
+        // 设置填充色
+        let rGradient = context.createRadialGradient(x, y, 0, x, y, radius);
+        rGradient.addColorStop(0, "rgba(0, 0, 0, 1)");
+        rGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+        context.fillStyle = rGradient;
 
-          // 设置globalAlpha
-          context.globalAlpha = weight;
+        // 设置globalAlpha
+        context.globalAlpha = weight;
 
-          // 绘制圆形
-          context.beginPath();
-          context.arc(x, y, radius, 0, 2 * Math.PI);
-          context.closePath();
+        // 绘制圆形
+        context.beginPath();
+        context.arc(x, y, radius, 0, 2 * Math.PI);
+        context.closePath();
 
-          // 填充
-          context.fill();
-        }
+        // 填充
+        context.fill();
+    }
 
-        // 创建调色盘
-        function createPalette() {
-          let colorStops = {
+    // 创建调色盘
+    function createPalette() {
+        let colorStops = {
             0: "#0ff",
             0.2: "#0f0",
             0.4: "#ff0",
             1: "#f00"
-          };
-          let width = 256, height = 20;
+        };
+        let width = 256, height = 20;
 
-          // 创建canvas
-          let palatteCanvas = document.createElement("canvas");
-          palatteCanvas.width = width;
-          palatteCanvas.height = height;
-          let ctx = palatteCanvas.getContext("2d");
+        // 创建canvas
+        let palatteCanvas = document.createElement("canvas");
+        palatteCanvas.width = width;
+        palatteCanvas.height = height;
+        let ctx = palatteCanvas.getContext("2d");
 
-          // 创建线性渐变色
-          let linearGradient = ctx.createLinearGradient(0, 0, width, 0);
-          for (const key in colorStops) {
+        // 创建线性渐变色
+        let linearGradient = ctx.createLinearGradient(0, 0, width, 0);
+        for (const key in colorStops) {
             linearGradient.addColorStop(key, colorStops[key]);
-          }
+        }
 
-          // 绘制渐变色条
-          ctx.fillStyle = linearGradient;
-          ctx.fillRect(0, 0, width, height);
+        // 绘制渐变色条
+        ctx.fillStyle = linearGradient;
+        ctx.fillRect(0, 0, width, height);
 
-          // 读取像素值
-          let imageData = ctx.getImageData(0, 0, width, 1).data
+        // 读取像素值
+        let imageData = ctx.getImageData(0, 0, width, 1).data
 
-          return {
+        return {
             canvas: palatteCanvas,
             pickColor: function (position) {
-              return imageData.slice(position * 4, position * 4 + 3)
+                return imageData.slice(position * 4, position * 4 + 3)
             }
-          }
         }
-    </script>
+    }
+</script>
+
 </html>
