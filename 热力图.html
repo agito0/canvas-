@@ -9,8 +9,8 @@
 </head>
 
 <body>
-    <!-- <canvas id="hotmap" width="800" height="800" style="border:1px solid #000000;"></canvas> -->
-    <canvas id="myCanvas" width="1920" height="1080" style="width: 240px;height: 125px;background: #000;"></canvs>
+    <canvas id="hotmap" width="800" height="800" style="border:1px solid #000000;"></canvas>
+    <canvas id="myCanvas" width="1920" height="1080" style="background: #000;"></canvs>
 </body>
 <!-- <script>
         var pointsdata = [{
@@ -159,15 +159,31 @@
 
 <script>
     // 热力数据
+    // var dataList = [
+    //     { x: 1020, y: 360 },
+    //     { x: 936, y: 480 }, 
+    //     { x: 960, y: 480 }, 
+    //     { x: 1032, y: 480 }, 
+    //     { x: 1056, y: 480 }
+    // ]
     var dataList = [
-        { x: 1020, y: 360 },
-        { x: 936, y: 480 }, 
-        { x: 960, y: 480 }, 
-        { x: 1032, y: 480 }, 
-        { x: 1056, y: 480 }
-    ]
-    dataList.forEach(item=>{
-        item.value = 1
+        {x: 672, y: 156}
+        ,{x: 708, y: 156}
+        ,{x: 768, y: 204}
+        ,{x: 900, y: 276}
+        ,{x: 768, y: 312}
+        ,{x: 612, y: 324}
+        ,{x: 708, y: 336}
+        ,{x: 840, y: 576}
+        ,{x: 732, y: 612}
+        ,{x: 1752, y: 672}
+        , {x: 864, y: 840}
+        , {x: 1512, y: 876}
+        , {x: 648, y: 1008}
+    ];
+    // let i = 1
+    dataList.forEach((item)=>{
+        item.value = 20
     })
     window.onload = function () {
         // 0. 创建Canvas并获取上下文
@@ -180,7 +196,9 @@
         let max = dataList.reduce((max, data) => {
             return Math.max(max, data.value);
         }, 0);
-        dataList.slice(0, 10).forEach(data => drawRadiation(context, {
+        console.log(dataList.slice());
+        
+        dataList.slice(0).forEach(data => drawRadiation(context, {
             x: data.x,
             y: data.y,
             radius: 50,
